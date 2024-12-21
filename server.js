@@ -8,7 +8,7 @@ const session = require('express-session');
 const path = require('path');
 const app = express();
 app.use(bodyParser.urlencoded({ extended: true })); // Parse URL-encoded bodies
-const PORT = process.env.PORT || 10000; // Render uses the PORT environment variable
+const PORT = process.env.PORT || 3000; // Render uses the PORT environment variable
 
 // Basic middleware setup
 app.use(cors());
