@@ -8,7 +8,7 @@ const session = require('express-session');
 const path = require('path');
 const app = express();
 app.use(bodyParser.urlencoded({ extended: true })); // Parse URL-encoded bodies
-const port = 3000;
+const PORT = process.env.PORT || 3000; // Render uses the PORT environment variable
 
 // Basic middleware setup
 app.use(cors());
@@ -307,6 +307,6 @@ app.delete('/delete-user', (req, res) => {
 });
 
 // Start server
-app.listen(port, () => {
-    console.log(`Server is running on http://localhost:${port}`);
+app.listen(PORT, () => {
+    console.log(`Server is running on http://localhost:${PORT}`);
 });
