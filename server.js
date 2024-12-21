@@ -1,3 +1,4 @@
+require('dotenv').config();
 const express = require('express');
 const mysql = require('mysql');
 const bodyParser = require('body-parser');
@@ -11,6 +12,11 @@ const port = 3000;
 
 // Basic middleware setup
 app.use(cors());
+
+app.use(cors({
+  origin: 'https://bejay-2004.github.io/the-final/'
+}));
+
 app.use(bodyParser.json());
 
 // Session middleware
@@ -37,10 +43,10 @@ app.use(express.static(__dirname, {
 
 // Database Configuration
 const db = mysql.createConnection({
-    host: 'localhost',
-    user: 'root',
-    password: 'GARINBELLYJOE@2004',
-    database: 'belly'
+    host: process.env.DB_HOST,
+    user: process.env.DB_USER,
+    password: process.env.DB_PASSWORD,
+    database: process.env.DB_NAME
 });
 
 // Database Connection
