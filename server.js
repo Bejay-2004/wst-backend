@@ -278,6 +278,40 @@ app.get('/api/get-all-contacts', (req, res) => {
     });
 });
 
+// Admin Endpoint to get all contacts from the 'belly' table
+app.get('/api/get-all-contacts', (req, res) => {
+    const query = 'SELECT * FROM belly';
+    db.query(query, (err, result) => {
+        if (err) {
+            return res.status(500).send('Error fetching data');
+        }
+        res.json({ users: result });
+    });
+});
+
+// Optional: Endpoint for filtering users
+app.get('/api/filter-users', (req, res) => {
+    const { search, userType, registrationDate } = req.query;
+    let query = 'SELECT * FROM belly WHERE 1=1';
+
+    if (search) {
+        query += ` AND (name LIKE '%${search}%' OR email LIKE '%${search}%')`;
+    }
+    if (userType) {
+        query += ` AND user_type = '${userType}'`;
+    }
+    if (registrationDate) {
+        query += ` AND registration_date = '${registrationDate}'`;
+    }
+
+    db.query(query, (err, result) => {
+        if (err) {
+            return res.status(500).send('Error fetching data');
+        }
+        res.json({ users: result });
+    });
+});
+
 // Update user route
 app.post('/update-user', (req, res) => {
     const { user_id, username } = req.body;
@@ -306,6 +340,45 @@ app.delete('/delete-user', (req, res) => {
     });
 });
 
+// Route to fetch posts data
+app.get('/api/posts', (req, res) => {
+    const query = 'SELECT user_id, category, Content FROM posts'; // Added 'content'
+    db.query(query, (err, results) => {
+        if (err) throw err;
+        res.json(results); // Send results to the frontend
+    });
+});
+
+// Endpoint to fetch posts from the database
+app.get('/api/posts', (req, res) => {
+    const query = `
+      SELECT posts.content, posts.category, posts.user_id
+      FROM posts
+      ORDER BY posts.created_at DESC
+    `;
+  
+    db.query(query, (err, results) => {
+      if (err) throw err;
+      res.json(results); // Send the posts with the user_id to the frontend
+    });
+});
+
+// Create an API endpoint to get the total number of users
+app.get('/api/totalUsers', (req, res) => {
+    const query = 'SELECT COUNT(*) AS user_id FROM belly'; // Replace 'users' with your actual table name
+
+    db.query(query, (err, results) => {
+        if (err) {
+            console.error('Error fetching total users:', err.stack);
+            return res.status(500).json({ error: 'Database query error' });
+        }
+
+        // Assuming the result is an array with one object containing the total_users count
+        const totalUsers = results[0].total_users;
+        res.json(totalUsers);  // Send the total number of users as the response
+    });
+});
+  
 // Start server
 app.listen(PORT, () => {
     console.log(`Server is running on http://localhost:${PORT}`);
